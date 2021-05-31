@@ -1,3 +1,13 @@
+<!--
+author: BRabbitFan
+date: 2021-05-24
+title: Qt README
+tags: Qt,学习笔记
+category: Qt学习笔记
+status: draft
+summary: Qt README
+-->
+
 # NoteQt
 个人Qt学习笔记
 
