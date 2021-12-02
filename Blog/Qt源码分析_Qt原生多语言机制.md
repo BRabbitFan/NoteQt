@@ -48,7 +48,9 @@ summary: 本文通过 Qt 源码介绍 Qt 原生多语言机制的实现原理.
 
 <div id="前言"></div>
 
-# 前言 : 多语言适配的目标与需解决的问题 [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+# 前言 : 多语言适配的目标与需解决的问题
 
 应用程序多语言适配从实现思路上分两种方式 : 
 
@@ -59,7 +61,9 @@ summary: 本文通过 Qt 源码介绍 Qt 原生多语言机制的实现原理.
 
 <div id="多语言动态切换的步骤/目标"></div>
 
-#### 多语言动态切换的步骤 / 目标 : [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+#### 多语言动态切换的步骤 / 目标 :
 
 1. 监测到切换语言的动作, 根据目标语言加载对应的语言文件.
 2. 根据从语言文件载入的数据, 更新应用程序内存放 UI 文本的数据结构.
@@ -71,7 +75,9 @@ summary: 本文通过 Qt 源码介绍 Qt 原生多语言机制的实现原理.
 
 <div id="实现多语言动态切换需要解决的问题"></div>
 
-#### 实现多语言动态切换需要解决的问题 : [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+#### 实现多语言动态切换需要解决的问题 :
 
 1. **语法兼容** : 对于静态文本来说无所谓, 但动态拼接的文本需要考虑不同语言之间的语法差异. 如英文中的序数词和中文中的量词要如何在另一种语言中对应.
 2. **歧义消除** : 同一段文本在一种语言内或许可在多处复用, 但这并不代表在另一种语言中也可以在相同的地方复用. 如英文 "Start" 在中文的不同语境下可能需要分别翻译为 "启动" 或 "开始".
@@ -83,13 +89,17 @@ summary: 本文通过 Qt 源码介绍 Qt 原生多语言机制的实现原理.
 
 <div id="Qt原生多语言机制原理与实现方式"></div>
 
-# 分析 : Qt 原生多语言机制原理与实现方式 [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+# 分析 : Qt 原生多语言机制原理与实现方式
 
 Qt 原生多语言机制涉及到如下几个类 : `QCoreApplication`, `QObject` 及其派生类, `QTranslator` 以及 `QApplication`.  
 
 <div id="结论在前"></div>
 
-## 结论在前 [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+## 结论在前
 
 先说结论, Qt 实现了这么一个核心功能 : **用户可以在任意时间任意位置获取到某段指定文本的最新翻译版本**. 这个功能是其整个多语言机制的核心功能, 也是 Qt 想达成的目标(唯一目标).
 
@@ -97,7 +107,9 @@ Qt 原生多语言机制涉及到如下几个类 : `QCoreApplication`, `QObject`
 
 <div id="基本思路"></div>
 
-## 基本思路 [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+## 基本思路
 
 整个系统可以分为这么几个部分来看:
 
@@ -111,13 +123,17 @@ Qt 原生多语言机制涉及到如下几个类 : `QCoreApplication`, `QObject`
 
 <div id="源码分析"></div>
 
-## 源码分析 [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+## 源码分析
 
 下面我按照 **基本思路** 中的几个部分分别介绍, 这里的重点在于 `QCoreApplication` 与 `QTranslator`.
 
 <div id="语言文件"></div>
 
-### 语言文件 --- `.ts` 文件与 `.qm` 文件 [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+### 语言文件 --- `.ts` 文件与 `.qm` 文件
 
 这一部分其实没什么好介绍的, `.ts` 文件其实就是 XML 文件, 完全可以按照 XML 文件格式打开. 一个标准的 `.ts` 文件结构如下:
 
@@ -157,7 +173,9 @@ Qt 原生多语言机制涉及到如下几个类 : `QCoreApplication`, `QObject`
 
 <div id="语言文件的生成"></div>
 
-#### `.ts` 文件与 `.qm` 文件的生成 [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+#### `.ts` 文件与 `.qm` 文件的生成
 
 我们无需手动地去设置某个原文与它的上下文等这些参数, 当我们使用 Qt linguist 工具在工程目录下使用 `lupdate` 指令即可生成 `.ts` 文件, 当然也可以用 IDE 提供的快捷操作点击生成. 当生成 `.ts` 文件时, Qt linguist 将检查所有可被 `#include` 到的 `.cpp`, `.h`, `.ui` 文件 (注意, 不包括 `.ui` 文件生成的 `ui_xxx.h` 文件). 这些文件中若出现如下方法调用即被加入 `.ts` 文件中:
 
@@ -170,7 +188,9 @@ Qt 原生多语言机制涉及到如下几个类 : `QCoreApplication`, `QObject`
 
 <div id="语言翻译器QTranslator"></div>
 
-### 语言翻译器 `QTranslator` [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+### 语言翻译器 `QTranslator`
 
 `QTranslator` 核心工作就是从 `.qm` 文件内加载数据并保存, 以及在 `QCoreApplication` 需要的时候返回其所需的翻译文本. 我在这里想重点讨论其内部的数据结构, 这是整个系统里最让我耳目一新的地方.
 
@@ -277,7 +297,9 @@ bool QTranslator::load(const QString & filename, const QString & directory,
 
 <div id="语言翻译器的内部数据结构"></div>
 
-#### 语言翻译器的内部数据结构 [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+#### 语言翻译器的内部数据结构
 
 在我的预想中私有类应该会维护一个 `QMap` 或者 `QHash` 之类的结构来保存数据, 但事实并非如此. `QTranslatorPrivate` 的声明部分位于 `qtranslator.cpp` 中, 如下:
 
@@ -335,7 +357,9 @@ public:  /* 注意这个枚举 */
 
 <div id="语言翻译器的加载文件操作"></div>
 
-#### 语言翻译器的加载文件操作 --- `do_load` [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+#### 语言翻译器的加载文件操作 --- `do_load`
 
 `QTranslatorPrivate::do_load` 有两个重载方法, 结合 `QTranslator` 的 `load` 方法不难看出, 这里的重载一个是打开文件并载入数据, 另一个是解析文件数据并初始化私有类对象成员. 实时也确实如此, 那么我们直接来看第二个重载方法 :
 
@@ -431,7 +455,9 @@ bool QTranslatorPrivate::do_load(const uchar *data, qsizetype len, const QString
 
 <div id="语言翻译器的获取翻译文本"></div>
 
-#### 语言翻译器的获取翻译文本 --- `do_translate` [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+#### 语言翻译器的获取翻译文本 --- `do_translate`
 
 现在我们知道了具体的数据存入的方式, 那么读取的方法 `do_translate` 内部的实现我们也可以猜个八九不离十了, 直接上源码:
 
@@ -544,7 +570,9 @@ searchDependencies:
 
 <div id="语言翻译器之间的附属关系"></div>
 
-#### 语言翻译器之间的附属关系 [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+#### 语言翻译器之间的附属关系
 
 上文中说到 `QTranslator` 重载了多种 `load` 方法. 其中一个版本允许我们一次加载多个 `.qm` 文件数据, 实现如下:
 
@@ -571,7 +599,9 @@ bool QTranslator::load(const uchar *data, int len, const QString &directory)
 
 <div id="歧义消除与复数处理"></div>
 
-#### 歧义消除与复数处理 [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+#### 歧义消除与复数处理
 
 歧义消除与复数处理是 Qt 多语言机制为翻译工作额外提供的功能. 关于这两个功能要注意的地方主要是使用方面, 因此这里不会说太多, 在下文有关翻译器使用的部分会详细说明.
 
@@ -587,7 +617,9 @@ bool QTranslator::load(const uchar *data, int len, const QString &directory)
 
 <div id="翻译器的加载与管理"></div>
 
-### 翻译器的加载与管理 --- `QCoreApplication` [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+### 翻译器的加载与管理 --- `QCoreApplication`
 
 Qt 原生多语言机制的底层原理其实通过看 `QTranslator` 的源码实现就可以了解的差不多了. 因此从本小节开始, 我将更着眼于使用方式上的介绍, 以及一些功能重叠的方法的选择推荐.
 
@@ -648,7 +680,9 @@ public:
 
 <div id="装载翻译器"></div>
 
-#### 装载翻译器 --- `QCoreApplication::installTranslator` [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+#### 装载翻译器 --- `QCoreApplication::installTranslator`
 
 当我们要装载某个翻译器到 `QCoreApplication` 时, 请保证该翻译器已经正确读取了某个 `.qm` 文件. 详细细节来看 `QCoreApplication::installTranslator` 实现部分:
 
@@ -686,7 +720,9 @@ bool QCoreApplication::installTranslator(QTranslator *translationFile)
 
 <div id="卸载翻译器"></div>
 
-#### 卸载翻译器 --- `QCoreApplication::removeTranslator` [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+#### 卸载翻译器 --- `QCoreApplication::removeTranslator`
 
 与 `installTranslator` 方法一样, `removeTranslator` 方法也需要指定目标翻译器的指针, 其实现如下:
 
@@ -719,13 +755,17 @@ bool QCoreApplication::removeTranslator(QTranslator *translationFile)
 
 <div id="获取最新的翻译文本"></div>
 
-### 获取最新的翻译文本 --- `QCoreApplication::translate` 与 `QObject::tr` [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+### 获取最新的翻译文本 --- `QCoreApplication::translate` 与 `QObject::tr`
 
 上一节里说到, `QCoreApplication` 中获取译文的方法有三种 :  `translate`, `tr` 与 `trUtf8`. 但这三种最终都是通过 `translate` 来获取译文. 与此之外, `QObject` 类也提供了方法 `tr` 用于获取译文. 下面来逐个解析:
 
 <div id="获取译文"></div>
 
-#### 获取译文 --- `QCoreApplication::translate` [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+#### 获取译文 --- `QCoreApplication::translate`
 
 `QCoreApplication::tr`, 与 `QCoreApplication::trUtf8` 就不多说了, 我们直接来看 `QCoreApplication::translate`. 由于这个方法将会在业务代码中大量地使用, 因此这里介绍一下它的参数:
 
@@ -774,7 +814,9 @@ QString QCoreApplication::translate(const char *context, const char *sourceText,
 
 <div id="QObject::tr与QCoreApplication::translate的关系"></div>
 
-#### `QObject::tr` 与 `QCoreApplication::translate` 的关系 [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+#### `QObject::tr` 与 `QCoreApplication::translate` 的关系
 
 上面说到了除了 `QCoreApplication::translate` 可以获取译文外, `QObject::tr` 也可以用于获取译文. 那么它们二者有什么关系呢? 我们凭直觉猜测后者应该也是最终调用了前者, 事实也确实如此. 而我之所以要特地花一小节来说这件事, 是因为 `QObject::tr` 的源码部分是比较容易误导人的.
 
@@ -881,7 +923,9 @@ QString QMetaObject::tr(const char *s, const char *c, int n) const
 
 <div id="更新UI控件的时机"></div>
 
-### 更新 UI 控件的时机 --- `QEvent::LanguageChange` 事件 [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+### 更新 UI 控件的时机 --- `QEvent::LanguageChange` 事件
 
 在讲解 `QCoreApplication` 时, 我们知道了当 `QTranslator` 翻译器在 `QCoreApplication` 中被正确地装载 / 卸载时, `QCoreApplication` 将利用 `sendEvent` 方法发出 `QEvent::LanguageChange` 事件. 这个操作涉及到了 Qt 的事件系统.
 
@@ -889,7 +933,9 @@ Qt 的事件系统简单来说就是为了跨平台而将各个操作系统自�
 
 <div id="LanguageChange事件发给了谁"></div>
 
-#### `QEvent::LanguageChange` 事件发给了谁? [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+#### `QEvent::LanguageChange` 事件发给了谁?
 
 上文中我有提到, `QEvent::LanguageChange` 事件最终会发给所有属于 `top-level widgets` 范畴内的控件. 而这一小节的目的在于要解开一个看源码时你可能会面临的一个疑惑.
 
@@ -991,7 +1037,9 @@ bool QApplication::event(QEvent *e)
 
 <div id="toplevelwidgets包括了哪些控件"></div>
 
-#### `top-level widgets` 包括了哪些控件? [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+#### `top-level widgets` 包括了哪些控件?
 
 我们接着来看这个 `QApplication::topLevelWidgets` 方法究竟返回了什么样的列表:
 
@@ -1130,7 +1178,9 @@ Q_DECLARE_FLAGS(WindowFlags, WindowType)  // Qt::WindowFlags 其实就是 Qt::Wi
 
 <div id="总结"></div>
 
-# 总结 [<返回顶部>](#返回顶部)
+[<返回顶部>](#返回顶部)
+
+# 总结
 
 在此之前我一直对 Qt 的多语言机制了解不够深入, 一直不知道 Qt 究竟什么时候才会跟新我的 UI 控件, 不知道 `QObject::tr` 方法究竟是怎么得到译文的. 不过现在, 我们分析完了 Qt 原生多语言机制的源码部分. 相信读到这的你已经对这个系统的实际运作了然于胸了.
 
