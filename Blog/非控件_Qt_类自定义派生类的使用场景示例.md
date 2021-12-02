@@ -8,8 +8,7 @@ status: publish
 summary: 关于自定义 QLayout 与 自定义 QGraphicsEffect 的示例.
 -->
 
-> 转载请注明原文链接: 
-> http://brabbit.xyz/blog/NoteQt/Blog/%E9%9D%9E%E6%8E%A7%E4%BB%B6_Qt_%E7%B1%BB%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B4%BE%E7%94%9F%E7%B1%BB%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%E7%A4%BA%E4%BE%8B.html
+> 转载请注明原文链接: http://brabbit.xyz/blog/NoteQt/Blog/非控件_Qt_类自定义派生类的使用场景示例.html
 
 ---
 
